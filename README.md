@@ -12,45 +12,27 @@
 
 ![Tag: Ansible](https://img.shields.io/badge/Tech-Ansible-orange)
 ![Tag: Debian 10-11](https://img.shields.io/badge/Tech-Debian%2010--11-orange)
-![Tag: Proxmox PBS](https://img.shields.io/badge/Tech-Proxmox%20PBS-orange)
-![Tag: Proxmox PVE](https://img.shields.io/badge/Tech-Proxmox%20PVE-orange)
-![Tag: NPM](https://img.shields.io/badge/Tech-NPM-orange)
-![Tag: Node.js](https://img.shields.io/badge/Tech-Node.js-orange)
-![Tag: VitePress](https://img.shields.io/badge/Tech-VitePress-orange)
+![Tag: Automation](https://img.shields.io/badge/Tech-Automation-orange)
 
-This project is a playbook dictionnary for the Labo-CBZ's servers, an ADRs recorder, a playground and a demostration project.
-This project does not contains any sensitives data like password or SSL/TLS key, just Ansible code, some document about choices automations tools.
+This project aims to streamline and empower your Ansible automation workflows. With a dedicated "tool" namespace repository, we offer a centralized hub for all your roles and playbooks, promoting collaboration and efficiency.
 
-## Content
+Key highlights include a versatile shell binary that effortlessly manages requirements from your playbook's requirements.yml file. By automating dependency downloads and installations, you can focus on crafting exceptional playbooks instead. Furthermore, our pre-defined roles, ready for customization, expedite playbook creation, making your automation journey smoother and faster.
 
-In this repository you can find:
-
-* Ansible roles and playbook
-* ADRs files
-* (Infrastucture documentation) //TODO
-* Tools and automation for devloppment
-* VitePress integrated website for documentation view/review
-* Configuration files (Ansible, linters, etc).
-* CI/CD GitLab pipeline
+Discover the power of centralized automation with Centralized Ansible Tools. Join the open-source community, share knowledge, and elevate your automation game!
 
 ## Architectural Decisions Records
 
-Architectural Decisions Records are availalbe into the "ADRs" folder.
-These document follow the "_ADR-template.md" file present into the "tools" folder.
+Here you can put your change to keep a trace of your work and decisions.
 
-## Start the documentation viewer
+### 2023-07-26: First Init
 
-This project has a VitePress documentation viewer, and the configuration parameters are located in "vitepress/loadersConfig.ts". To start the server, you need to have Node.js and NPM installed. After installing the required packages, just run:
-
-```SHELL
-npm install
-npm run doc:dev
-```
-
-## Sources
-
-Sources and references used are stored into the Source page in "vitepress/navbar/Sources.md" file.
+* First init of this playbook with the bootstrap_playbook playbook by Lord Robin Crombez
 
 ## Authors
 
 * Lord Robin Crombez
+
+## Sources
+
+* [Ansible playbook documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_playbooks.html)
+* [Ansible Molecule documentation](https://molecule.readthedocs.io/)
