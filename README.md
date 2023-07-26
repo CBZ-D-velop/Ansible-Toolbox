@@ -1,4 +1,4 @@
-# Labo-CBZ Playground
+# Ansible Toolbox
 
 ![Licence Status](https://img.shields.io/badge/licence-MIT-brightgreen)
 ![CI Status](https://img.shields.io/badge/CI-success-brightgreen)
