@@ -1,0 +1,18 @@
+---
+input_host: "localhost"
+
+input_bootstrap_playbook_user: "lordrobincbz" # The user for the bootstrap playbook
+input_bootstrap_playbook_base_path: "../../bootstrapted_playbooks" # The base path for the playbooks, relative to the playbook location
+
+input_bootstrap_playbook_meta_author: "Lord Robin Crombez" # The author of the bootstrap playbook
+input_bootstrap_playbook_meta_namespace: "tool" # The namespace for the bootstrap playbook
+input_bootstrap_playbook_meta_playbook_name: "bootstrap_playbook" # The name of the bootstrap playbook
+input_bootstrap_playbook_meta_description: "An Ansible playbook to bootstrap and create other playbooks" # The description of the bootstrap playbook
+input_bootstrap_playbook_meta_company: "Labo-CBZ"
+
+input_bootstrap_playbook_tags:
+- "Ansible" # Tags for the bootstrap playbook
+- "Debian"
+- "Boilerplate"
+- "Bootstrap"
+- "Molecule"
