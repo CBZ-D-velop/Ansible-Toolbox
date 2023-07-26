@@ -1,2 +1,0 @@
-V	330723125631Z		1000	unknown	/C=FR/ST=state/L=city/O=Local Ansible/OU=My Local Ansible Intermediate CA 2/CN=My-Local-Ansible-Intermediate-CA-2/emailAddress=contact@your.domain.tld
-V	231024125632Z		1001	unknown	/C=FR/ST=state/L=city/O=Local Ansible/OU=Local Dev IT/CN=my-end-certificate-1.domain.tld/emailAddress=contact@your.domain.tld
