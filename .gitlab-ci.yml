@@ -8,6 +8,38 @@
 
 stages:
 - gitlab-test
+- lint
+- build_testing
+
+variables:
+  PIPELINE_SCENARIO_NAME: "gitlabci"
+
+###############################################################################
+#################### actions
+###############################################################################
+
+# To start, we need to lint role's files with a YML vision
+# Because if one of the files doesn't respect YML conventions,
+# we dont need to test rest of the pipeline
+.lint: &lint
+  stage: lint
+  image: $DOCKER_NEXUS_ADDRESS/$DOCKER_IMAGE_DEBIAN_ANSIBLE
+  script:
+    - yamllint -c ./.yamllint $path/*.yml
+    - ansible-lint --config=./.ansible-lint ./$path/*
+  allow_failure: false
+  retry: 2
+
+# We will build and run each tools with the input.yml file
+.build_and_test: &build_and_test
+  stage: build_testing
+  image: $DOCKER_NEXUS_ADDRESS/$DOCKER_IMAGE_DEBIAN_ANSIBLE
+  script:
+    - ./build
+    - cd $path
+    - ./$binary
+  allow_failure: false
+  retry: 2
 
 ###############################################################################
 #################### CI JOBS
@@ -23,3 +55,44 @@ sast:
 include:
 - template: Security/SAST.gitlab-ci.yml
   allow_failure: false
+
+############################################
+#### lint
+############################################
+
+lint_bootstrap_ssl_files:
+  <<: *lint
+  variables:
+    path: "./tools/bootstrap_ssl_files"
+
+lint_bootstrap_role:
+  <<: *lint
+  variables:
+    path: "./tools/bootstrap_role"
+
+lint_bootstrap_playbook:
+  <<: *lint
+  variables:
+    path: "./tools/bootstrap_playbook"
+
+#############################################
+##### build and test
+#############################################
+
+build_bootstrap_ssl_files:
+  <<: *lint
+  variables:
+    path: "./tools/bootstrap_playbook"
+    binary: "bootstrap_ssl_files"
+
+build_bootstrap_role:
+  <<: *lint
+  variables:
+    path: "./tools/bootstrap_role"
+    binary: "bootstrap_role"
+
+build_bootstrap_playbook:
+  <<: *lint
+  variables:
+    path: "./tools/bootstrap_playbook"
+    binary: "bootstrap_playbook"
