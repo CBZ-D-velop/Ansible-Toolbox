@@ -82,7 +82,7 @@ lint_bootstrap_playbook:
 build_bootstrap_ssl_files:
   <<: *build_and_test
   variables:
-    path: "./tools/bootstrap_playbook"
+    path: "./tools/bootstrap_ssl_files"
     binary: "bootstrap_ssl_files"
 
 build_bootstrap_role:
