@@ -1,7 +1,7 @@
 ---
 - name: "playbook.bootstrap_role"
   src: "https://github.com/CBZ-D-velop/Ansible-Playbook-Tool-Bootstrap-Role.git"
-  version: "1.0"
+  version: "2.0"
 
 - name: "playbook.bootstrap_playbook"
   src: "https://github.com/CBZ-D-velop/Ansible-Playbook-Tool-Bootstrap-Playbook.git"

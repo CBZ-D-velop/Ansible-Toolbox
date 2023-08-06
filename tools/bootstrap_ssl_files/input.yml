@@ -43,7 +43,7 @@ input_bootstrap_ssl_files_intermediates_ca:
     certification_ca: "My Local Ansible Intermediate CA 1"
 
 input_bootstrap_ssl_files_end_certs:
-  - cn: "my-filebeat-cluster.domain.tld"
+  - cn: "my-prometheus-cluster.domain.tld"
     c: "FR"
     st: "state"
     l: "city"
@@ -52,6 +52,7 @@ input_bootstrap_ssl_files_end_certs:
     email_address: "contact@your.domain.tld"
     certification_ca: "My Local Ansible Intermediate CA 2"
     alternatives:
-      - "molecule-local-instance-1-install-filebeat"
-      - "molecule-local-instance-2-install-filebeat"
-      - "molecule-local-instance-3-install-filebeat"
+      - "molecule-local-instance-1-install-prometheus"
+      - "molecule-local-instance-2-install-prometheus"
+      - "molecule-local-instance-3-install-prometheus"
+      - "molecule-local-instance-4-install-prometheus"
