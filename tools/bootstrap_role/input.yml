@@ -5,14 +5,16 @@ input_bootstrap_role_user: "lordrobincbz" # The user for the bootstrap role
 input_bootstrap_role_base_path: "../../bootstraped_roles" # The base path for the roles, relative to the role location
 
 input_bootstrap_role_meta_author: "Lord Robin Crombez" # The author of the bootstrap role
+input_bootstrap_role_meta_company: "Labo-CBZ"
 input_bootstrap_role_meta_namespace: "labocbz" # The namespace for the bootstrap role
-input_bootstrap_role_meta_role_name: "install_prometheus" # The name of the bootstrap role
-input_bootstrap_role_meta_description: "An Ansible role to install and configure Prometheus on your host." # The description of the bootstrap role
+input_bootstrap_role_meta_role_name: "install_mariadb" # The name of the bootstrap role
+input_bootstrap_role_meta_description: "An Ansible role to install and configure MariaDB on your host." # The description of the bootstrap role
 
-input_bootstrap_role_tags:
+input_bootstrap_role_technologies:
 - "Ansible" # Tags for the bootstrap role
 - "Debian"
-- "Prometheus"
-- "Standalone"
+- "SQL"
+- "MariaDB"
 - "Cluster"
+- "Galera"
 - "SSL/TLS"
