@@ -8,11 +8,13 @@
 
 stages:
 - gitlab-test
-- lint
-- build_testing
+- yaml-lint
+- jinja2-lint
+- ansible-lint
+- molecule-test
 
 variables:
-  PIPELINE_SCENARIO_NAME: "gitlabci"
+  PIPELINE_SCENARIO_NAME: "cicd-debian-11"
 
 ###############################################################################
 #################### actions
@@ -21,23 +23,61 @@ variables:
 # To start, we need to lint role's files with a YML vision
 # Because if one of the files doesn't respect YML conventions,
 # we dont need to test rest of the pipeline
-.lint: &lint
-  stage: lint
-  image: $DOCKER_NEXUS_ADDRESS/$DOCKER_IMAGE_DEBIAN_ANSIBLE
+.yaml_lint: &yaml_lint
+  stage: yaml-lint
+  image: $NEXUS_ADDRESS/$DOCKER_IMAGE_YAML_LINT
+  before_script:
+    # Fix weird ansible bug: https://github.com/trailofbits/algo/issues/1637
+    # This probably happens due to gitlab-runner mounting the git repo into the container
+    - "chmod o-w ."
   script:
-    - yamllint -c ./.yamllint $path/*.yml
-    - ansible-lint --config=./.ansible-lint ./$path/*
+    - yamllint -c ./.yamllint $path # Here mains files
   allow_failure: false
   retry: 2
 
-# We will build and run each tools with the input.yml file
-.build_and_test: &build_and_test
-  stage: build_testing
-  image: $DOCKER_NEXUS_ADDRESS/$DOCKER_IMAGE_DEBIAN_ANSIBLE
+# Then we need to lint on role's files with a JINJA2 vision
+# Because if one of the templates files doesn't respect JINJA2 conventions,
+# we dont need to test rest of the pipeline
+.jinja2_lint: &jinja2_lint
+  stage: jinja2-lint
+  image: $NEXUS_ADDRESS/$DOCKER_IMAGE_JINJA_LINT
+  before_script:
+    # Fix weird ansible bug: https://github.com/trailofbits/algo/issues/1637
+    # This probably happens due to gitlab-runner mounting the git repo into the container
+    - "chmod o-w ."
   script:
-    - ./build
-    - cd $path
-    - ./$binary
+    - "j2lint ./templates/*.j2"
+  allow_failure: false
+  retry: 2
+
+.ansible_lint: &ansible_lint
+  stage: ansible-lint
+  image: $NEXUS_ADDRESS/$DOCKER_IMAGE_ANSIBLE_LINT
+  before_script:
+    # Fix weird ansible bug: https://github.com/trailofbits/algo/issues/1637
+    # This probably happens due to gitlab-runner mounting the git repo into the container
+    - "chmod o-w ."
+  script:
+    - ansible-lint --config=./.ansible-lint --exclude molecule --exclude tests ./*
+  allow_failure: false
+  retry: 2
+
+.molecule_test: &molecule_test
+  stage: molecule-test
+  image: $NEXUS_ADDRESS/$DOCKER_IMAGE_DOCKER_MOLECULE
+  variables:
+    PY_COLORS: '1'
+    ANSIBLE_FORCE_COLOR: '1'
+  before_script:
+    - "docker login -u \"$NEXUS_REPOS_USERNAME\" -p \"$NEXUS_REPOS_PASSWORD\" http://$NEXUS_ADDRESS"
+    - "python3 -m compileall /usr/lib/python3 -qq"
+    - "cp ./.ansible.cfg /root/.ansible.cfg"
+    # Fix weird ansible bug: https://github.com/trailofbits/algo/issues/1637
+    # This probably happens due to gitlab-runner mounting the git repo into the container
+    - "chmod o-w ."
+    - "[ -f \"./molecule/$PIPELINE_SCENARIO_NAME/requirements.yml\" ] && ansible-galaxy install -r ./molecule/$PIPELINE_SCENARIO_NAME/requirements.yml --roles-path=./molecule/$PIPELINE_SCENARIO_NAME/roles"
+  script:
+    - "molecule test --scenario-name $PIPELINE_SCENARIO_NAME"
   allow_failure: false
   retry: 2
 
@@ -57,42 +97,54 @@ include:
   allow_failure: false
 
 ############################################
-#### lint
+#### yaml-lint
 ############################################
 
-lint_bootstrap_ssl_files:
-  <<: *lint
+yaml_lint_role:
+  <<: *yaml_lint
   variables:
-    path: "./tools/bootstrap_ssl_files"
+    path: "./*/*.yml"
 
-lint_bootstrap_role:
-  <<: *lint
+yaml_lint_molecule:
+  <<: *yaml_lint
   variables:
-    path: "./tools/bootstrap_role"
+    path: "./molecule/*/*.yml"
 
-lint_bootstrap_playbook:
-  <<: *lint
+yaml_lint_inventories:
+  <<: *yaml_lint
   variables:
-    path: "./tools/bootstrap_playbook"
+    path: "./tests/inventory/hosts.yml ./tests/inventory/*/*.yml"
+
+yaml_lint_extra_vars:
+  <<: *yaml_lint
+  variables:
+    path: "./tests/certs/main.yml ./tests/tower/tower.yml"
 
 #############################################
-##### build and test
+##### jinja2-lint
 #############################################
 
-build_bootstrap_ssl_files:
-  <<: *build_and_test
-  variables:
-    path: "./tools/bootstrap_ssl_files"
-    binary: "bootstrap_ssl_files"
+jinja2_lint_templates:
+  <<: *jinja2_lint
 
-build_bootstrap_role:
-  <<: *build_and_test
-  variables:
-    path: "./tools/bootstrap_role"
-    binary: "bootstrap_role"
+############################################
+#### ansible-lint
+############################################
 
-build_bootstrap_playbook:
-  <<: *build_and_test
-  variables:
-    path: "./tools/bootstrap_playbook"
-    binary: "bootstrap_playbook"
+ansible_lint:
+  <<: *ansible_lint
+  needs:
+    - "yaml_lint_role"
+    - "yaml_lint_molecule"
+    - "yaml_lint_inventories"
+    - "yaml_lint_extra_vars"
+    - "jinja2_lint_templates"
+
+############################################
+#### moelcule test
+############################################
+
+molecule_test:
+  <<: *molecule_test
+  needs:
+    - "ansible_lint"
