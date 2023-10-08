@@ -129,21 +129,21 @@ ansible_lint_bootstrap_ssl_files:
 ############################################
 
 tool_test_bootstrap_playbook:
-  <<: *tool_test_
+  <<: *tool_test
   variables:
     binary: "bootstrap_playbook"
   needs:
     - "ansible_lint_bootstrap_playbook"
 
 tool_test_bootstrap_role:
-  <<: *tool_test_
+  <<: *tool_test
   variables:
     binary: "bootstrap_role"
   needs:
     - "ansible_lint_bootstrap_role"
 
 tool_test_bootstrap_ssl_files:
-  <<: *tool_test_
+  <<: *tool_test
   variables:
     binary: "bootstrap_ssl_files"
   needs:
