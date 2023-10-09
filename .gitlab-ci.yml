@@ -58,7 +58,9 @@ variables:
     # Fix weird ansible bug: https://github.com/trailofbits/algo/issues/1637
     # This probably happens due to gitlab-runner mounting the git repo into the container
     - "chmod o-w ."
-    - "./build"
+    - "ls -all"
+    - ""
+    - "bash ./build"
   script:
     - "cd ./tools/$binary"
     - "./$binary"
