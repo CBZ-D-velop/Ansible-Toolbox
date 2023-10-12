@@ -8,11 +8,12 @@
 
 stages:
 - gitlab-test
-- lint
-- build_testing
+- yaml-lint
+- ansible-lint
+- tool-test
 
 variables:
-  PIPELINE_SCENARIO_NAME: "gitlabci"
+  PIPELINE_SCENARIO_NAME: "cicd-debian-11"
 
 ###############################################################################
 #################### actions
@@ -21,23 +22,48 @@ variables:
 # To start, we need to lint role's files with a YML vision
 # Because if one of the files doesn't respect YML conventions,
 # we dont need to test rest of the pipeline
-.lint: &lint
-  stage: lint
-  image: $DOCKER_NEXUS_ADDRESS/$DOCKER_IMAGE_DEBIAN_ANSIBLE
+.yaml_lint: &yaml_lint
+  stage: yaml-lint
+  image: $NEXUS_ADDRESS/$DOCKER_IMAGE_YAML_LINT
+  before_script:
+    # Fix weird ansible bug: https://github.com/trailofbits/algo/issues/1637
+    # This probably happens due to gitlab-runner mounting the git repo into the container
+    - "chmod o-w ."
   script:
-    - yamllint -c ./.yamllint $path/*.yml
-    - ansible-lint --config=./.ansible-lint ./$path/*
+    - yamllint -c ./.yamllint ./tools/$binary/*.yml # Here mains files
   allow_failure: false
   retry: 2
 
-# We will build and run each tools with the input.yml file
-.build_and_test: &build_and_test
-  stage: build_testing
-  image: $DOCKER_NEXUS_ADDRESS/$DOCKER_IMAGE_DEBIAN_ANSIBLE
+.ansible_lint: &ansible_lint
+  stage: ansible-lint
+  image: $NEXUS_ADDRESS/$DOCKER_IMAGE_ANSIBLE_LINT
+  before_script:
+    # Fix weird ansible bug: https://github.com/trailofbits/algo/issues/1637
+    # This probably happens due to gitlab-runner mounting the git repo into the container
+    - "chmod o-w ."
   script:
-    - ./build
-    - cd $path
-    - ./$binary
+    - ansible-lint --config=./.ansible-lint --exclude molecule --exclude tests ./tools/$binary/*.yml
+  allow_failure: false
+  retry: 2
+
+.tool_test: &tool_test
+  stage: tool-test
+  image: $NEXUS_ADDRESS/$DOCKER_IMAGE_DOCKER_MOLECULE
+  variables:
+    PY_COLORS: '1'
+    ANSIBLE_FORCE_COLOR: '1'
+  before_script:
+    - "python3 -m compileall /usr/lib/python3 -qq"
+    - "cp ./.ansible.cfg /root/.ansible.cfg"
+    # Fix weird ansible bug: https://github.com/trailofbits/algo/issues/1637
+    # This probably happens due to gitlab-runner mounting the git repo into the container
+    - "chmod o-w ."
+    - "ls -all"
+    - ""
+    - "bash ./build"
+  script:
+    - "cd ./tools/$binary"
+    - "./$binary"
   allow_failure: false
   retry: 2
 
@@ -57,42 +83,70 @@ include:
   allow_failure: false
 
 ############################################
-#### lint
+#### yaml-lint
 ############################################
 
-lint_bootstrap_ssl_files:
-  <<: *lint
+yaml_lint_bootstrap_playbook:
+  <<: *yaml_lint
   variables:
-    path: "./tools/bootstrap_ssl_files"
+    binary: "bootstrap_playbook"
 
-lint_bootstrap_role:
-  <<: *lint
+yaml_lint_bootstrap_role:
+  <<: *yaml_lint
   variables:
-    path: "./tools/bootstrap_role"
-
-lint_bootstrap_playbook:
-  <<: *lint
-  variables:
-    path: "./tools/bootstrap_playbook"
-
-#############################################
-##### build and test
-#############################################
-
-build_bootstrap_ssl_files:
-  <<: *build_and_test
-  variables:
-    path: "./tools/bootstrap_ssl_files"
-    binary: "bootstrap_ssl_files"
-
-build_bootstrap_role:
-  <<: *build_and_test
-  variables:
-    path: "./tools/bootstrap_role"
     binary: "bootstrap_role"
 
-build_bootstrap_playbook:
-  <<: *build_and_test
+yaml_lint_bootstrap_ssl_files:
+  <<: *yaml_lint
   variables:
-    path: "./tools/bootstrap_playbook"
+    binary: "bootstrap_ssl_files"
+
+############################################
+#### ansible-lint
+############################################
+
+ansible_lint_bootstrap_playbook:
+  <<: *ansible_lint
+  variables:
     binary: "bootstrap_playbook"
+  needs:
+    - "yaml_lint_bootstrap_playbook"
+
+ansible_lint_bootstrap_role:
+  <<: *ansible_lint
+  variables:
+    binary: "bootstrap_role"
+  needs:
+    - "yaml_lint_bootstrap_role"
+
+ansible_lint_bootstrap_ssl_files:
+  <<: *ansible_lint
+  variables:
+    binary: "bootstrap_ssl_files"
+  needs:
+    - "yaml_lint_bootstrap_ssl_files"
+
+############################################
+#### moelcule test
+############################################
+
+tool_test_bootstrap_playbook:
+  <<: *tool_test
+  variables:
+    binary: "bootstrap_playbook"
+  needs:
+    - "ansible_lint_bootstrap_playbook"
+
+tool_test_bootstrap_role:
+  <<: *tool_test
+  variables:
+    binary: "bootstrap_role"
+  needs:
+    - "ansible_lint_bootstrap_role"
+
+tool_test_bootstrap_ssl_files:
+  <<: *tool_test
+  variables:
+    binary: "bootstrap_ssl_files"
+  needs:
+    - "ansible_lint_bootstrap_ssl_files"
