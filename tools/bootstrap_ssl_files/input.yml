@@ -46,7 +46,7 @@ input_bootstrap_ssl_files_intermediates_ca:
     certification_ca: "My Local Ansible Intermediate CA 1"
 
 input_bootstrap_ssl_files_end_certs:
-  - cn: "my-redis-cluster.domain.tld"
+  - cn: "my-elasticsearch-cluster.domain.tld"
     c: "FR"
     st: "state"
     l: "city"
@@ -56,11 +56,13 @@ input_bootstrap_ssl_files_end_certs:
     certification_ca: "My Local Ansible Intermediate CA 2"
     ca_password: "m3EH3A56*ùph5mNY"
     alternatives:
-      - "molecule-local-instance-1-install-redis"
-      - "molecule-local-instance-2-install-redis"
-      - "molecule-local-instance-3-install-redis"
+      - "molecule-local-instance-1-deploy-elk"
+      - "molecule-local-instance-2-deploy-elk"
+      - "molecule-local-instance-3-deploy-elk"
+      - "127.0.0.1"
+      - "localhost"
 
-  - cn: "my-influxdb-server.domain.tld"
+  - cn: "my-kibana-cluster.domain.tld"
     c: "FR"
     st: "state"
     l: "city"
@@ -70,9 +72,13 @@ input_bootstrap_ssl_files_end_certs:
     certification_ca: "My Local Ansible Intermediate CA 2"
     ca_password: "m3EH3A56*ùph5mNY"
     alternatives:
-      - "molecule-local-instance-1-install-influxdb"
+      - "molecule-local-instance-1-deploy-elk"
+      - "molecule-local-instance-2-deploy-elk"
+      - "molecule-local-instance-3-deploy-elk"
+      - "127.0.0.1"
+      - "localhost"
 
-  - cn: "my-haproxy-server.domain.tld"
+  - cn: "my-logstash-cluster.domain.tld"
     c: "FR"
     st: "state"
     l: "city"
@@ -82,4 +88,8 @@ input_bootstrap_ssl_files_end_certs:
     certification_ca: "My Local Ansible Intermediate CA 2"
     ca_password: "m3EH3A56*ùph5mNY"
     alternatives:
-      - "molecule-local-instance-1-install-haproxy"
+      - "molecule-local-instance-1-deploy-elk"
+      - "molecule-local-instance-2-deploy-elk"
+      - "molecule-local-instance-3-deploy-elk"
+      - "127.0.0.1"
+      - "localhost"
