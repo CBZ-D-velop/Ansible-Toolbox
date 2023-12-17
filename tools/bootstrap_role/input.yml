@@ -10,7 +10,7 @@ input_bootstrap_role_meta_namespace: "labocbz" # The namespace for the bootstrap
 input_bootstrap_role_meta_role_name: "install_mariadb" # The name of the bootstrap role
 input_bootstrap_role_meta_description: "An Ansible role to install and configure MariaDB on your host." # The description of the bootstrap role
 
-input_bootstrap_role_technologies:
+input_bootstrap_role_tags:
 - "Ansible" # Tags for the bootstrap role
 - "Debian"
 - "SQL"
