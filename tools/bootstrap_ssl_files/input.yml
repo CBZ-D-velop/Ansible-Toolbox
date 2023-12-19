@@ -5,7 +5,7 @@ input_bootstrap_ssl_files_user: "lordrobincbz"
 input_bootstrap_ssl_files_base_path: "../../bootstraped_ssl_files"
 # The validity of your certs files
 input_bootstrap_ssl_files_ca_validity: 3650
-input_bootstrap_ssl_files_cert_validity: 90
+input_bootstrap_ssl_files_cert_validity: 3650
 # The size of your key
 input_bootstrap_ssl_files_key_size: 4096
 # Files wanted and where you want them
@@ -46,7 +46,7 @@ input_bootstrap_ssl_files_intermediates_ca:
     certification_ca: "My Local Ansible Intermediate CA 1"
 
 input_bootstrap_ssl_files_end_certs:
-  - cn: "my-redis-cluster.domain.tld"
+  - cn: "my-elasticsearch-cluster.domain.tld"
     c: "FR"
     st: "state"
     l: "city"
@@ -56,11 +56,11 @@ input_bootstrap_ssl_files_end_certs:
     certification_ca: "My Local Ansible Intermediate CA 2"
     ca_password: "m3EH3A56*ùph5mNY"
     alternatives:
-      - "molecule-local-instance-1-install-redis"
-      - "molecule-local-instance-2-install-redis"
-      - "molecule-local-instance-3-install-redis"
+      - "molecule-local-instance-1-deploy-elk"
+      - "molecule-local-instance-2-deploy-elk"
+      - "molecule-local-instance-3-deploy-elk"
 
-  - cn: "my-influxdb-server.domain.tld"
+  - cn: "my-kibana-cluster.domain.tld"
     c: "FR"
     st: "state"
     l: "city"
@@ -70,9 +70,11 @@ input_bootstrap_ssl_files_end_certs:
     certification_ca: "My Local Ansible Intermediate CA 2"
     ca_password: "m3EH3A56*ùph5mNY"
     alternatives:
-      - "molecule-local-instance-1-install-influxdb"
+      - "molecule-local-instance-1-deploy-elk"
+      - "molecule-local-instance-2-deploy-elk"
+      - "molecule-local-instance-3-deploy-elk"
 
-  - cn: "my-haproxy-server.domain.tld"
+  - cn: "my-logstash-cluster.domain.tld"
     c: "FR"
     st: "state"
     l: "city"
@@ -82,4 +84,6 @@ input_bootstrap_ssl_files_end_certs:
     certification_ca: "My Local Ansible Intermediate CA 2"
     ca_password: "m3EH3A56*ùph5mNY"
     alternatives:
-      - "molecule-local-instance-1-install-haproxy"
+      - "molecule-local-instance-1-deploy-elk"
+      - "molecule-local-instance-2-deploy-elk"
+      - "molecule-local-instance-3-deploy-elk"
