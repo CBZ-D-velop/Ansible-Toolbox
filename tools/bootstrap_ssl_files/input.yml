@@ -46,7 +46,7 @@ input_bootstrap_ssl_files_intermediates_ca:
     certification_ca: "My Local Ansible Intermediate CA 1"
 
 input_bootstrap_ssl_files_end_certs:
-  - cn: "my-redis-server.domain.tld"
+  - cn: "my-elasticsearch-cluster.domain.tld"
     c: "FR"
     st: "state"
     l: "city"
@@ -56,5 +56,34 @@ input_bootstrap_ssl_files_end_certs:
     certification_ca: "My Local Ansible Intermediate CA 2"
     ca_password: "m3EH3A56*ùph5mNY"
     alternatives:
-      - "molecule-local-instance-1-deploy-server"
+      - "molecule-local-instance-1-deploy-elk"
+      - "molecule-local-instance-2-deploy-elk"
+      - "molecule-local-instance-3-deploy-elk"
 
+  - cn: "my-kibana-cluster.domain.tld"
+    c: "FR"
+    st: "state"
+    l: "city"
+    o: "Local Ansible"
+    ou: "Local Dev IT"
+    email_address: "contact@your.domain.tld"
+    certification_ca: "My Local Ansible Intermediate CA 2"
+    ca_password: "m3EH3A56*ùph5mNY"
+    alternatives:
+      - "molecule-local-instance-1-deploy-elk"
+      - "molecule-local-instance-2-deploy-elk"
+      - "molecule-local-instance-3-deploy-elk"
+
+  - cn: "my-logstash-cluster.domain.tld"
+    c: "FR"
+    st: "state"
+    l: "city"
+    o: "Local Ansible"
+    ou: "Local Dev IT"
+    email_address: "contact@your.domain.tld"
+    certification_ca: "My Local Ansible Intermediate CA 2"
+    ca_password: "m3EH3A56*ùph5mNY"
+    alternatives:
+      - "molecule-local-instance-1-deploy-elk"
+      - "molecule-local-instance-2-deploy-elk"
+      - "molecule-local-instance-3-deploy-elk"
