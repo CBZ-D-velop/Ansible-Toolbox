@@ -1,25 +1,70 @@
 ---
-input_host: "localhost"
+tower_env: "localhost"
 
-input_bootstrap_playbook_user: "lordrobincbz" # The user for the bootstrap playbook
-input_bootstrap_playbook_base_path: "../../bootstraped_playbooks" # The base path for the playbooks, relative to the playbook location
+input_bootstrap_playbook__user: "lordrobincbz"
+input_bootstrap_playbook__base_path: "../../bootstraped_playbooks"
 
-input_bootstrap_playbook_meta_author: "Lord Robin Crombez" # The author of the bootstrap playbook
-input_bootstrap_playbook_meta_namespace: "labocbz" # The namespace for the bootstrap playbook
-input_bootstrap_playbook_meta_playbook_name: "deploy_phpmyadmin" # The name of the bootstrap playbook
-input_bootstrap_playbook_meta_description: "An Ansible playbook to deploy and configure a PhpMyAdmin instance on your hosts." # The description of the bootstrap playbook
-input_bootstrap_playbook_meta_company: "Labo-CBZ"
+input_bootstrap_playbook__meta_author: "Lord Robin Crombez"
+input_bootstrap_playbook__meta_namespace: "labocbz"
+input_bootstrap_playbook__meta_playbook_name: "my_new_playbook"
+input_bootstrap_playbook__meta_description: "This is a limited description for the meta."
+input_bootstrap_playbook__meta_company: "Corp"
+input_bootstrap_playbook__meta_license: "MIT"
 
-input_bootstrap_playbook_tags:
-  - "Ansible" # Tags for the bootstrap playbook
-  - "Debian"
-  - "PhpMyAdmin"
-  - "Apache2"
-  - "SSL/TLS"
-  - "mTLS"
-  - "MySQL"
+input_bootstrap_playbook__tags:
+  - "UNIX"
+
+# The driver you use for molecule
+input_bootstrap_playbook__molecule_driver: "docker"
+
+# The path of your future role
+input_bootstrap_playbook__path: "{{ input_bootstrap_playbook__base_path }}/{{ input_bootstrap_playbook__meta_namespace }}.{{ input_bootstrap_playbook__meta_playbook_name }}"
+
+# A list of folder to create
+input_bootstrap_playbook__folders:
+  - "assets"
+  - "meta"
+  - "molecule"
+  - "tests"
+  - "tests/tower"
+  - "tests/inventory"
+  - "tests/inventory/group_vars"
+  - "tests/inventory/host_vars"
+  - "tests/certs"
+
+input_bootstrap_playbook__molecule_scenarios:
+  - { ssl: true, hosts: 3, name: "default", target_group: "local", docker_image: "robincbz/debian-12-ansible:latest" }
+  - { ssl: true, hosts: 3, name: "cicd-debian-11", target_group: "cicd-debian-11", docker_image: "${NEXUS_REPOS_DOCKER_REGISTRY}/${DOCKER_IMAGE_DEBIAN_11_ANSIBLE}" }
+  - { ssl: true, hosts: 3, name: "cicd-debian-12", target_group: "cicd-debian-12", docker_image: "${NEXUS_REPOS_DOCKER_REGISTRY}/${DOCKER_IMAGE_DEBIAN_12_ANSIBLE}" }
+  - { ssl: true, hosts: 3, name: "cicd-ubuntu-22", target_group: "cicd-ubuntu-22", docker_image: "${NEXUS_REPOS_DOCKER_REGISTRY}/${DOCKER_IMAGE_UBUNTU_22_ANSIBLE}" }
+
+input_bootstrap_playbook__inventory_groups:
+  - "SQL"
+  - "APACHE2"
   - "PHP"
-  - "PHP-FPM"
-  - "Redis"
-  - "Mariadb"
-  - "MySQL"
+
+input_bootstrap_playbook__requirements:
+  - { name: "labocbz.prepare_host", src: "https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Prepare-Host.git" }
+
+input_bootstrap_playbook__platforms:
+    - "Debian"
+    - "Ubuntu"
+
+input_bootstrap_playbook__molecule_test_sequence:
+  - "destroy"
+  - "syntax"
+  - "dependency"
+  - "create"
+  - "prepare"
+  - "converge"
+  - "idempotence"
+  - "verify"
+  - "destroy"
+
+# Some file to import in the root folder of the future role
+input_bootstrap_playbook__configuration_files:
+  - ".ansible-lint"
+  - ".ansible.cfg"
+  - ".yamllint"
+  - "CODEOWNERS"
+  - ".gitlab-ci.yml"

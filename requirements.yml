@@ -1,12 +1,9 @@
 ---
 - name: "playbook.bootstrap_role"
   src: "https://github.com/CBZ-D-velop/Ansible-Playbook-Tool-Bootstrap-Role.git"
-  version: "4.0"
 
 - name: "playbook.bootstrap_playbook"
   src: "https://github.com/CBZ-D-velop/Ansible-Playbook-Tool-Bootstrap-Playbook.git"
-  version: "3.0"
 
 - name: "playbook.bootstrap_ssl_files"
   src: "https://github.com/CBZ-D-velop/Ansible-Playbook-Tool-Bootstrap-SSL-Files.git"
-  version: "4.0"

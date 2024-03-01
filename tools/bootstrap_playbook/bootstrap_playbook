@@ -1,7 +1,0 @@
-#!/bin/bash
-
-cd ../..
-
-ansible-playbook -i ./tools/bootstrap_playbook/hosts -e "@./tools/bootstrap_playbook/input.yml" ./playbooks/playbook.bootstrap_playbook/playbook.yml
-
-chmod 777 -R *

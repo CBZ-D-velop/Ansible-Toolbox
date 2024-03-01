@@ -1,20 +1,75 @@
 ---
-input_host: "localhost"
+tower_env: "localhost"
 
-input_bootstrap_role_user: "lordrobincbz" # The user for the bootstrap role
-input_bootstrap_role_base_path: "../../bootstraped_roles" # The base path for the roles, relative to the role location
+input_bootstrap_role__user: "lordrobincbz"
+input_bootstrap_role__base_path: "../../bootstraped_roles"
 
-input_bootstrap_role_meta_author: "Lord Robin Crombez" # The author of the bootstrap role
-input_bootstrap_role_meta_company: "Labo-CBZ"
-input_bootstrap_role_meta_namespace: "labocbz" # The namespace for the bootstrap role
-input_bootstrap_role_meta_role_name: "install_mariadb" # The name of the bootstrap role
-input_bootstrap_role_meta_description: "An Ansible role to install and configure MariaDB on your host." # The description of the bootstrap role
+input_bootstrap_role__meta_author: "Lord Robin Crombez"
+input_bootstrap_role__meta_namespace: "labocbz"
+input_bootstrap_role__meta_role_name: "my_new_role"
+input_bootstrap_role__meta_description: "This is a limited description for the meta."
+input_bootstrap_role__meta_company: "Corp"
+input_bootstrap_role__meta_license: "MIT"
 
-input_bootstrap_role_tags:
-- "Ansible" # Tags for the bootstrap role
-- "Debian"
-- "SQL"
-- "MariaDB"
-- "Cluster"
-- "Galera"
-- "SSL/TLS"
+input_bootstrap_role__tags:
+  - "UNIX"
+
+# The driver you use for molecule
+input_bootstrap_role__molecule_driver: "docker"
+
+# The path of your future role
+input_bootstrap_role__path: "{{ input_bootstrap_role__base_path }}/{{ input_bootstrap_role__meta_namespace }}.{{ input_bootstrap_role__meta_role_name }}"
+
+# A list of folder to create
+input_bootstrap_role__folders:
+  - "defaults"
+  - "files"
+  - "handlers"
+  - "meta"
+  - "molecule"
+  - "tasks"
+  - "templates"
+  - "tests"
+  - "tests/tower"
+  - "tests/inventory"
+  - "tests/inventory/group_vars"
+  - "tests/inventory/host_vars"
+  - "tests/certs"
+  - "vars"
+
+input_bootstrap_role__molecule_scenarios:
+  - { ssl: true, hosts: 3, name: "default", target_group: "local", docker_image: "robincbz/debian-12-ansible:latest" }
+  - { ssl: true, hosts: 3, name: "cicd-debian-11", target_group: "cicd-debian-11", docker_image: "${NEXUS_REPOS_DOCKER_REGISTRY}/${DOCKER_IMAGE_DEBIAN_11_ANSIBLE}" }
+  - { ssl: true, hosts: 3, name: "cicd-debian-12", target_group: "cicd-debian-12", docker_image: "${NEXUS_REPOS_DOCKER_REGISTRY}/${DOCKER_IMAGE_DEBIAN_12_ANSIBLE}" }
+  - { ssl: true, hosts: 3, name: "cicd-ubuntu-22", target_group: "cicd-ubuntu-22", docker_image: "${NEXUS_REPOS_DOCKER_REGISTRY}/${DOCKER_IMAGE_UBUNTU_22_ANSIBLE}" }
+
+input_bootstrap_role__inventory_groups:
+  - "SQL"
+  - "APACHE2"
+  - "PHP"
+
+input_bootstrap_role__requirements:
+  - { name: "labocbz.prepare_host", src: "https://github.com/CBZ-D-velop/Ansible-Role-Labocbz-Prepare-Host.git" }
+
+input_bootstrap_role__platforms:
+    - "Debian"
+    - "Ubuntu"
+
+input_bootstrap_role__molecule_test_sequence:
+  - "destroy"
+  - "syntax"
+  - "dependency"
+  - "create"
+  - "prepare"
+  - "converge"
+  - "idempotence"
+  - "verify"
+  - "destroy"
+
+# Some file to import in the root folder of the future role
+input_bootstrap_role__configuration_files:
+  - ".ansible-lint"
+  - ".ansible.cfg"
+  - ".yamllint"
+  - "CODEOWNERS"
+  - ".gitlab-ci.yml"
